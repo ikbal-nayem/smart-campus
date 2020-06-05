@@ -32,4 +32,4 @@ post_data = {
 }
 ```
 
-**See [https://github.com/ikbal-nayem/smart-campus/wiki/Accounts](wiki) for more information**
+**See [Wiki](https://github.com/ikbal-nayem/smart-campus/wiki/Accounts) for more information**
