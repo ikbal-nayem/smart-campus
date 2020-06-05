@@ -63,7 +63,6 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 class UserInfo(models.Model):
     SELECT_GENDER = (('Male', 'Male'), ('Female', 'Female'))
     user = models.OneToOneField(UserAccount , on_delete=models.CASCADE, primary_key=True)
-    is_verified = models.BooleanField(default=False)
     father_name = models.CharField(max_length=255, null=True, blank=True)
     mother_name = models.CharField(max_length=255, null=True, blank=True)
     gender = models.CharField(max_length=6, choices=SELECT_GENDER, null=True)
@@ -114,6 +113,7 @@ class StudentInfo(models.Model):
 class TeacherInfo(models.Model):
     MARITAL_STATUS = (('Married', 'Married'), ('Unmarried', 'Unmarried'))
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE, primary_key=True)
+    is_verified = models.BooleanField(default=False)
     teacher_id = models.BigIntegerField(unique=True, null=True)
     department = models.ForeignKey(Department, on_delete=models.DO_NOTHING, null=True)
     designation = models.CharField(max_length=100, null=True, blank=True)
@@ -133,6 +133,7 @@ class TeacherInfo(models.Model):
 class StaffInfo(models.Model):
     MARITAL_STATUS = (('Married', 'Married'), ('Unmarried', 'Unmarried'))
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
+    is_verified = models.BooleanField(default=False)
     department = models.ForeignKey(Department, on_delete=models.DO_NOTHING, null=True)
     designation = models.CharField(max_length=255, null=True)
     qualifications = models.TextField(null=True, blank=True)

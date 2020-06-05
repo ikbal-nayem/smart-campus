@@ -30,19 +30,9 @@ class TeacherListAPIView(ModelViewSet):
 
     @action(detail=True, methods=['GET', 'PUT', 'PATCH'], serializer_class=UserPersonalInfo)
     def userinfo(self, request, pk=None):
-        user_object = self.get_object()
-        if request.method == 'GET':
-            serializer = self.get_serializer(user_object.userinfo)
-            return Response(serializer.data)
-        else:
-            serializer = self.get_serializer(user_object.userinfo, data=request.data)
-            if serializer.is_valid():
-                updateUser(user_object, serializer)
-                serializer.save()
-                return Response(serializer.data)
-            else:
-                return Response(serializer.errors)
-    
+        user_object = self.get_object().userinfo
+        return updateUserInfo(user_object, request, self.get_serializer)
+
     @action(detail=True, methods=['GET', 'PUT', 'PATCH'], serializer_class=TeacherAcademicInfo)
     def academic_info(self, request, pk=None):
         user_object = self.get_object().teacherinfo
@@ -66,16 +56,7 @@ class TeacherListAPIView(ModelViewSet):
             serializer = self.get_serializer(user_object.phone.all(), many=True)
             return Response(serializer.data)
         else:
-            pre_number_list = [ph.number for ph in user_object.phone.all()]
-            new_list = request.data['numbers']
-            for number in pre_number_list:
-                if number not in new_list:
-                    user_object.phone.get(number=number).delete()
-            for number in new_list:
-                if number not in pre_number_list:
-                    user_object.phone.create(number=number)
-            serializer = self.get_serializer(user_object.phone.all(), many=True)
-            return Response(serializer.data)
+            return updatePhoneNumber(user_object, request, self.get_serializer)
 
     
     
@@ -93,17 +74,7 @@ class StudentListAPIView(ModelViewSet):
     @action(detail=True, methods=['GET', 'PUT', 'PATCH'], serializer_class=UserPersonalInfo)
     def userinfo(self, request, pk=None):
         user_object = self.get_object().userinfo
-        if request.method == 'GET':
-            serializer = self.get_serializer(user_object)
-            return Response(serializer.data)
-        else:
-            serializer = self.get_serializer(user_object, data=request.data)
-            if serializer.is_valid():
-                updateUser(user_object, serializer)
-                serializer.save()
-                return Response(serializer.data)
-            else:
-                return Response(serializer.errors)
+        return updateUserInfo(user_object, request, self.get_serializer)
     
     @action(detail=True, methods=['GET', 'PUT', 'PATCH'], serializer_class=StudentAcademicInfo)
     def academic_info(self, request, pk=None):
@@ -126,16 +97,7 @@ class StudentListAPIView(ModelViewSet):
             serializer = self.get_serializer(user_object.phone.all(), many=True)
             return Response(serializer.data)
         else:
-            pre_number_list = [ph.number for ph in user_object.phone.all()]
-            new_list = request.data['numbers']
-            for number in pre_number_list:
-                if number not in new_list:
-                    user_object.phone.get(number=number).delete()
-            for number in new_list:
-                if number not in pre_number_list:
-                    user_object.phone.create(number=number)
-            serializer = self.get_serializer(user_object.phone.all(), many=True)
-            return Response(serializer.data)
+            return updatePhoneNumber(user_object, request, self.get_serializer)
 
 
 
@@ -153,17 +115,7 @@ class StaffListAPIView(ModelViewSet):
     @action(detail=True, methods=['GET', 'PUT', 'PATCH'], serializer_class=UserPersonalInfo)
     def userinfo(self, request, pk=None):
         user_object = self.get_object().userinfo
-        if request.method == 'GET':
-            serializer = self.get_serializer(user_object)
-            return Response(serializer.data)
-        else:
-            serializer = self.get_serializer(user_object, data=request.data)
-            if serializer.is_valid():
-                updateUser(user_object, serializer)
-                serializer.save()
-                return Response(serializer.data)
-            else:
-                return Response(serializer.errors)
+        return updateUserInfo(user_object, request, self.get_serializer)
 
     @action(detail=True, methods=['GET', 'PUT', 'PATCH'], serializer_class=StaffAcademicInfo)
     def academic_info(self, request, pk=None):
@@ -186,18 +138,22 @@ class StaffListAPIView(ModelViewSet):
             serializer = self.get_serializer(user_object.phone.all(), many=True)
             return Response(serializer.data)
         else:
-            pre_number_list = [ph.number for ph in user_object.phone.all()]
-            new_list = request.data['numbers']
-            for number in pre_number_list:
-                if number not in new_list:
-                    user_object.phone.get(number=number).delete()
-            for number in new_list:
-                if number not in pre_number_list:
-                    user_object.phone.create(number=number)
-            serializer = self.get_serializer(user_object.phone.all(), many=True)
+            return updatePhoneNumber(user_object, request, self.get_serializer)
+
+
+
+def updateUserInfo(user_object, request, get_serializer):
+    if request.method == 'GET':
+        serializer = get_serializer(user_object)
+        return Response(serializer.data)
+    else:
+        serializer = get_serializer(user_object, data=request.data)
+        if serializer.is_valid():
+            updateUser(user_object, serializer)
+            serializer.save()
             return Response(serializer.data)
-
-
+        else:
+            return Response(serializer.errors)
 
 def updateUser(user_object, serializer):
     first_name = serializer.initial_data.get('first_name', user_object.user.first_name)
@@ -208,3 +164,20 @@ def updateUser(user_object, serializer):
     user.last_name = last_name
     user.email = email
     user.save()
+
+def updatePhoneNumber(user_object, request, get_serializer):
+    pre_number_list = [ph.number for ph in user_object.phone.all()]
+    try:
+        new_list = request.data['numbers']
+        if type(new_list) is not list:
+            return Response({'error': 'numbers should be a list of phone number'})
+    except KeyError:
+        return Response({'error': 'numbers field is required'})
+    for number in pre_number_list:
+        if number not in new_list:
+            user_object.phone.get(number=number).delete()
+    for number in new_list:
+        if number not in pre_number_list:
+            user_object.phone.create(number=number)
+    serializer = get_serializer(user_object.phone.all(), many=True)
+    return Response(serializer.data)

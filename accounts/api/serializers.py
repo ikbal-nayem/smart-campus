@@ -21,7 +21,7 @@ class UserPersonalInfo(ModelSerializer):
         fields = [
             'father_name', 'mother_name', 'gender', 'birth_date',
             'religion', 'blood_group', 'present_address', 'permanent_address',
-            'facebook_url', 'is_verified', 'picture',
+            'facebook_url', 'picture',
             '_account_created', '_account_updated'
         ]
         read_only_fields = ['_account_created', '_account_updated']
@@ -47,7 +47,7 @@ class TeacherAcademicInfo(ModelSerializer):
     class Meta:
         model = TeacherInfo
         fields = [
-            'teacher_id', 'department', 'designation',
+            'teacher_id', 'is_verified', 'department', 'designation',
             'degree', 'marital_status', 'joining_date',
             'course_takes', 'course_info'
         ]
@@ -83,21 +83,21 @@ class TeacherDetailsSerializer(ModelSerializer):
 
 class TeacherListSerializer(ModelSerializer):
     profile_picture = SerializerMethodField('get_picture_url')
-    teacher_id = SerializerMethodField('get_teacher_id')
     department = SerializerMethodField('get_department')
     designation = SerializerMethodField('get_designation')
+    is_verified = SerializerMethodField('get_is_verified')
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'i_am', 'department', 'teacher_id', 'designation', 'is_active', 'profile_picture']
+        fields = ['id', 'first_name', 'last_name', 'email', 'i_am', 'department', 'designation', 'is_active', 'profile_picture', 'is_verified']
 
     def get_picture_url(self, user):
         return self.context['request'].build_absolute_uri(user.userinfo.picture.url)
-    def get_teacher_id(self, user):
-        return user.teacherinfo.teacher_id
     def get_department(self, user):
         return user.teacherinfo.department.code if user.teacherinfo.department else None
     def get_designation(self, user):
         return user.teacherinfo.designation
+    def get_is_verified(self, user):
+        return user.teacherinfo.is_verified
 
 
 #                                           student serializer
@@ -147,7 +147,7 @@ class StaffAcademicInfo(ModelSerializer):
     class Meta:
         model = StaffInfo
         fields = [
-            'department', 'designation',
+            'is_verified', 'department', 'designation',
             'qualifications', 'marital_status',
             'joining_date'
         ]
@@ -172,9 +172,10 @@ class StaffListSerializer(ModelSerializer):
     profile_picture = SerializerMethodField('get_picture_url')
     designation = SerializerMethodField('get_designation')
     department = SerializerMethodField('get_department')
+    is_verified = SerializerMethodField('get_is_verified')
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'i_am', 'designation', 'department', 'is_active', 'profile_picture']
+        fields = ['id', 'first_name', 'last_name', 'i_am', 'designation', 'department', 'is_active', 'profile_picture', 'is_verified']
 
     def get_picture_url(self, user):
         return self.context['request'].build_absolute_uri(user.userinfo.picture.url)
@@ -182,4 +183,5 @@ class StaffListSerializer(ModelSerializer):
         return user.staffinfo.designation
     def get_department(self, user):
         return user.staffinfo.department.code if user.staffinfo.department else None
-
+    def get_is_verified(self, user):
+        return user.staffinfo.is_verified
