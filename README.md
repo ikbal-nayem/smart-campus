@@ -31,3 +31,5 @@ post_data = {
    "password2": ""
 }
 ```
+
+**See [https://github.com/ikbal-nayem/smart-campus/wiki/Accounts](wiki) for more information**
