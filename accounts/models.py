@@ -6,18 +6,18 @@ from department.models import Department, Course
 #                                        create new user
 
 class UserAccountManager(BaseUserManager):
-    def create_user(self, first_name, last_name, email, i_am, password):
+    def create_user(self, first_name, last_name, username, email, i_am, password):
         if not email:
             raise ValueError('User must have an email address.')
         email = self.normalize_email(email)
-        user = self.model(first_name=first_name, last_name=last_name, email=email, i_am=i_am)
+        user = self.model(first_name=first_name, last_name=last_name, username=username, email=email, i_am=i_am)
 
         user.set_password(password)
         user.save()
         return user
     
-    def create_superuser(self, first_name, last_name, email, i_am, password):
-        user = self.create_user(first_name, last_name, email, i_am, password)
+    def create_superuser(self, first_name, last_name, username, email, i_am, password):
+        user = self.create_user(first_name, last_name, username, email, i_am, password)
         user.is_staff = True
         user.is_superuser = True
         user.save()
@@ -30,6 +30,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         ('teacher', 'Teacher'),
         ('staff', 'Staff')
     )
+    username = models.CharField(max_length=100, unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(max_length=255, unique=True)
@@ -55,7 +56,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
             return self.staffinfo
     
     def __str__(self):
-        return self.get_full_name()+f'({self.i_am})'
+        return self.get_full_name()
 
 
 #                                           user information
@@ -111,7 +112,9 @@ class StudentInfo(models.Model):
 #                                       teacher table
 
 class TeacherInfo(models.Model):
-    MARITAL_STATUS = (('Married', 'Married'), ('Unmarried', 'Unmarried'))
+    class MARITAL_STATUS(models.TextChoices):
+        Married = 'Married'
+        Unmarried = 'Unmarried'
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE, primary_key=True)
     is_verified = models.BooleanField(default=False)
     teacher_id = models.BigIntegerField(unique=True, null=True)
@@ -119,7 +122,7 @@ class TeacherInfo(models.Model):
     designation = models.CharField(max_length=100, null=True, blank=True)
     degree = models.TextField(null=True, blank=True)
     course_takes = models.ManyToManyField(Course, related_name='course_takes', default=None)
-    marital_status = models.CharField(max_length=9, choices=MARITAL_STATUS, null=True)
+    marital_status = models.CharField(max_length=9, choices=MARITAL_STATUS.choices, null=True)
     joining_date = models.DateField(null=True, blank=True)
 
     @property
@@ -131,14 +134,31 @@ class TeacherInfo(models.Model):
 
 
 class StaffInfo(models.Model):
-    MARITAL_STATUS = (('Married', 'Married'), ('Unmarried', 'Unmarried'))
+    class MARITAL_STATUS(models.TextChoices):
+        Married = 'Married'
+        Unmarried = 'Unmarried'
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
     is_verified = models.BooleanField(default=False)
     department = models.ForeignKey(Department, on_delete=models.DO_NOTHING, null=True)
     designation = models.CharField(max_length=255, null=True)
     qualifications = models.TextField(null=True, blank=True)
-    marital_status = models.CharField(max_length=9, choices=MARITAL_STATUS, null=True)
+    marital_status = models.CharField(max_length=9, choices=MARITAL_STATUS.choices, null=True)
     joining_date = models.DateField(null=True)
 
     def __str__(self):
         return self.user.get_full_name()
+
+
+
+class Administrator(models.Model):
+    class ADMINISTRATOR_TYPE(models.TextChoices):
+        super_admin = 'Super Admin'
+        admin = 'Admin'
+        editor = 'Editor'
+
+    user_id = models.IntegerField(primary_key=True)
+    administrator_type = models.CharField(max_length=11, choices=ADMINISTRATOR_TYPE.choices)
+    department = models.ForeignKey(Department, related_name='department', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return UserAccount.objects.get(pk=self.user_id).get_full_name()

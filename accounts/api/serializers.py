@@ -26,6 +26,14 @@ class UserPersonalInfo(ModelSerializer):
         ]
         read_only_fields = ['_account_created', '_account_updated']
 
+class UserPersonalSafeInfo(ModelSerializer):
+    class Meta:
+        model = UserInfo
+        fields = [
+            'gender', 'religion', 'blood_group', 'present_address',
+            'facebook_url', 'picture'
+        ]
+
 class ContactInfo(ModelSerializer):
     class Meta:
         model = Phonebook
@@ -51,6 +59,7 @@ class TeacherAcademicInfo(ModelSerializer):
             'degree', 'marital_status', 'joining_date',
             'course_takes', 'course_info'
         ]
+        read_only_fields = ['is_verified']
     def update(self, instance, validated_data):
         if validated_data.get('course_list'):
             course_list = validated_data.pop('course_list')
@@ -74,12 +83,29 @@ class TeacherDetailsSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'first_name', 'last_name', 'email', 'is_active',
+            'id', 'username', 'first_name', 'last_name', 'email', 'is_active',
             'userinfo', 'picture', 'academic_info', 'phone'
         ]
 
     def get_picture_url(self, user):
         return self.context['request'].build_absolute_uri(user.userinfo.picture.url)
+
+
+class TeacherDetailsSafeSerializer(ModelSerializer):
+    picture = SerializerMethodField('get_picture_url')
+    userinfo = UserPersonalSafeInfo(many=False, read_only=True)
+    phone = ContactInfo(many=True, read_only=True)
+    academic_info = TeacherAcademicInfo(many=False, read_only=True)
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'first_name', 'last_name', 'email', 'is_active', 'userinfo',
+            'picture', 'academic_info', 'phone'
+        ]
+
+    def get_picture_url(self, user):
+        return self.context['request'].build_absolute_uri(user.userinfo.picture.url)
+
 
 class TeacherListSerializer(ModelSerializer):
     profile_picture = SerializerMethodField('get_picture_url')
@@ -88,7 +114,7 @@ class TeacherListSerializer(ModelSerializer):
     is_verified = SerializerMethodField('get_is_verified')
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'i_am', 'department', 'designation', 'is_active', 'profile_picture', 'is_verified']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'i_am', 'department', 'designation', 'is_active', 'profile_picture', 'is_verified']
 
     def get_picture_url(self, user):
         return self.context['request'].build_absolute_uri(user.userinfo.picture.url)
@@ -118,13 +144,27 @@ class StudentDetailsSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'first_name', 'last_name', 'email', 'is_active',
+            'id', 'username', 'first_name', 'last_name', 'email', 'is_active',
             'userinfo', 'picture', 'academic_info', 'phone'
         ]
 
     def get_picture_url(self, user):
         return self.context['request'].build_absolute_uri(user.userinfo.picture.url)
 
+class StudentDetailsSafeSerializer(ModelSerializer):
+    picture = SerializerMethodField('get_picture_url')
+    userinfo = UserPersonalSafeInfo(many=False, read_only=True)
+    # phone = ContactInfo(many=True)
+    academic_info = StudentAcademicInfo(many=False, read_only=True)
+    class Meta:
+        model = User
+        fields = [
+            'id', 'username', 'first_name', 'last_name', 'email', 'is_active', 'userinfo',
+            'picture', 'academic_info'
+        ]
+
+    def get_picture_url(self, user):
+        return self.context['request'].build_absolute_uri(user.userinfo.picture.url)
 
 class StudentListSerializer(ModelSerializer):
     profile_picture = SerializerMethodField('get_picture_url')
@@ -132,7 +172,7 @@ class StudentListSerializer(ModelSerializer):
     department = SerializerMethodField('get_department')
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'i_am', 'department', 'student_id', 'is_active', 'profile_picture']
+        fields = ['id', 'username', 'first_name', 'last_name', 'i_am', 'department', 'student_id', 'is_active', 'profile_picture']
     
     def get_picture_url(self, user):
         return self.context['request'].build_absolute_uri(user.userinfo.picture.url)
@@ -140,6 +180,20 @@ class StudentListSerializer(ModelSerializer):
         return user.studentinfo.student_id
     def get_department(self, user):
         return user.studentinfo.department.code if user.studentinfo.department else None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #                                            staff serializer
@@ -151,6 +205,7 @@ class StaffAcademicInfo(ModelSerializer):
             'qualifications', 'marital_status',
             'joining_date'
         ]
+        read_only_fields = ['is_verified']
 
 class StaffDetailsSerializer(ModelSerializer):
     picture = SerializerMethodField('get_picture_url')
@@ -160,13 +215,12 @@ class StaffDetailsSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'first_name', 'last_name', 'email', 'is_active',
+            'id', 'username', 'first_name', 'last_name', 'email', 'is_active',
             'userinfo', 'picture', 'academic_info', 'phone'
         ]
 
     def get_picture_url(self, user):
         return self.context['request'].build_absolute_uri(user.userinfo.picture.url)
-
 
 class StaffListSerializer(ModelSerializer):
     profile_picture = SerializerMethodField('get_picture_url')
@@ -175,7 +229,7 @@ class StaffListSerializer(ModelSerializer):
     is_verified = SerializerMethodField('get_is_verified')
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'i_am', 'designation', 'department', 'is_active', 'profile_picture', 'is_verified']
+        fields = ['id', 'username', 'first_name', 'last_name', 'i_am', 'designation', 'department', 'is_active', 'profile_picture', 'is_verified']
 
     def get_picture_url(self, user):
         return self.context['request'].build_absolute_uri(user.userinfo.picture.url)
