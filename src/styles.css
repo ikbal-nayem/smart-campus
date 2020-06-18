@@ -1,0 +1,16 @@
+:root {
+    --bg-img: url('./image/bg.jpg');
+    --bg-img-auth: url('./image/auth_background.jpg');
+    
+    --bg-color: #0000004d;
+    --color-lite: #f0f0f0de;
+    --color-primary: #13aaaae6;
+    --color-red: #ff00009a;
+}
+
+body, .root {
+    background-image: var(--bg-img);
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+}

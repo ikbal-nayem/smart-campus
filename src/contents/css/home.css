@@ -1,0 +1,9 @@
+.site-background{
+    background: rgba(0, 0, 0, 0.37);
+    height: 100vh;
+}
+.site-content{
+    margin: 70px 10px 15px;
+    padding: 20px;
+    color: #fff;
+}

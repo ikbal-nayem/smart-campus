@@ -1,0 +1,85 @@
+.container{
+    background-image: var(--bg-img-auth);
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100vh;
+    width: 100%;
+    display: inline-block;
+}
+.auth-content{
+    display: block;
+}
+.divider{
+    border-color: var(--color-primary);
+}
+.divider-error{
+    border-color: var(--color-red);
+}
+.divider-success{
+    border-color: greenyellow;
+}
+.auth-form{
+    margin-top: 5em;
+    max-width: 400px;
+    min-width: 300px;
+    padding: 20px;
+    border-radius: 1vh;
+    text-align: center;
+    background-color: var(--bg-color);
+    border: 1px black solid;
+    box-shadow: 10px 10px 10px var(--bg-color) ;
+    -moz-box-shadow: 0 0 10px var(--bg-color);
+    -webkit-box-shadow: 0 0 10px var(--bg-color);
+    -o-box-shadow: 0 0 10px var(--bg-color);
+    transition: ".3s";
+}
+.auth-form-error{
+    border-color: var(--color-red);
+    box-shadow: 10px 10px 10px var(--color-red) ;
+    -moz-box-shadow: 0 0 10px var(--color-red);
+    -webkit-box-shadow: 0 0 10px var(--color-red);
+    -o-box-shadow: 0 0 10px var(--color-red);
+}
+.auth-form-success{
+    border: greenyellow;
+    box-shadow: 10px 10px 10px greenyellow;
+    -moz-box-shadow: 0 0 10px greenyellow;
+    -webkit-box-shadow: 0 0 10px greenyellow;
+    -o-box-shadow: 0 0 10px greenyellow;
+}
+.goto-campus{
+    color: var(--color-lite) !important;
+    margin: 0 !important;
+    text-shadow: var(--color-lite) 1px 1px 3px;
+}
+.input{
+    border: 1px transparent  solid;
+    transition: '.3s';
+}
+.input:hover{
+    border-color: var(--color-primary);
+    box-shadow: var(--color-primary) 1px 1px 5px;
+}
+.input:focus-within{
+    border-color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+.submit{
+    background-color: #13aaaa80;
+    padding: 15px;
+    height: 50px;
+    font-weight: bold;
+    border: 0;
+    font-size: 1em;
+}
+.submit:hover{
+    background-color: var(--color-primary);
+    transform: scale(1.1);
+}
+.link{
+    color: var(--color-lite);
+}
+.link:hover{
+    color: var(--color-primary);
+}
