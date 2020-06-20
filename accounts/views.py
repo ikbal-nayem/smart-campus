@@ -1,4 +1,5 @@
 import random
+from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions
@@ -19,21 +20,22 @@ class SignupView(APIView):
             i_am = data['i_am']
             password1 = data['password1']
             password2 = data['password2']
-        except KeyError:
-            return Response({'error': 'Each fields are require'})
+        except Exception as e:
+            return Response({'error': f'{str(e).strip()} field is require'})
 
         if password1 == password2:
             if User.objects.filter(email=email).exists():
-                return Response({'error': 'Email is exists'})
+                return Response({'error': 'Email already exists'})
             elif len(password1) < 6:
                 return Response({'error': 'Password is too short'})
             else:
                 username = makeUsername(first_name, last_name)
                 user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, i_am=i_am, password=password1)
                 user.save()
-                return Response({'success': 'User has been created successfully'})
+                token = Token.objects.get(user=user).key
+                return Response({'success': 'User has been created successfully', 'token': token})
         else:
-            return Response({'error': 'Passwords do not match'})
+            return Response({'error': 'Password do not match'})
 
 def makeUsername(first_name, last_name):
     full_name = (first_name+last_name).replace(' ', '').lower()

@@ -15,6 +15,12 @@ from ..models import (
 User = get_user_model()
 
 
+class CurrentUserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'i_am']
+
+
 class UserPersonalInfo(ModelSerializer):
     class Meta:
         model = UserInfo

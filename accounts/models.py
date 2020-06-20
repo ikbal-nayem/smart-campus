@@ -77,7 +77,6 @@ class UserInfo(models.Model):
     _account_created = models.DateField(auto_now_add=True)
     _account_updated = models.DateField(auto_now=True)
 
-
     def __str__(self):
         return self.user.get_full_name()
 

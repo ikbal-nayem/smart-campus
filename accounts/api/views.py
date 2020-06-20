@@ -1,4 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -24,9 +25,17 @@ from .serializers import (
 	StaffDetailsSerializer,
 	TeacherListSerializer,
 	StudentListSerializer,
-	StaffListSerializer
+	StaffListSerializer,
+	CurrentUserSerializer
 )
 User = get_user_model()
+
+
+class CurrentUserView(APIView):
+	def get(self, request, format=None):
+		serializer = CurrentUserSerializer(request.user)
+		return Response(serializer.data)
+
 
 class TeacherListAPIView(ModelViewSet):
 	queryset = User.objects.filter(i_am='teacher')
