@@ -1,9 +1,13 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Layout } from 'antd';
 import './css/home.css';
 
-import HomeMenu from '../components/home/home-menu';
-import MainHeader from '../components/home/header';
+import { HomeMenu, MainHeader } from '../components/home';
+import Dashboard from './dashboard'
+import Teacher from './teachers'
+import Student from './students'
+import Staff from './staffs'
 
 const { Content } = Layout;
 
@@ -18,24 +22,24 @@ class Home extends React.Component{
 
     render(){
         return(
-            <Layout className='site-background'>
-                <MainHeader collapsed={this.state.collapsed} toggle={this.toggle} />
-                <HomeMenu collapsed={this.state.collapsed} />
-                <Layout className='site-background' style={{marginLeft: this.state.collapsed?80:200, transition: '.2s'}}>
+            <Router>
+                <Layout className='site-background'>
+                    <MainHeader collapsed={this.state.collapsed} toggle={this.toggle} history={this.props.history} />
+                    <HomeMenu collapsed={this.state.collapsed} />
+                    <Layout className='site-background' style={{marginLeft: this.state.collapsed?80:200, transition: '.2s'}}>
 
-                    <Content className='site-content'>
-                        Content<br/>
-                        Content<br/>
-                        Content<br/>
-                        Content<br/>
-                        Content<br/>
-                        Content<br/>
-                        Content<br/>
-                        Content<br/>
-                    </Content>
+                        <Content className='site-content'>
+                            <Switch>
+                                <Route path='/' exact component={Dashboard} />
+                                <Route path='/students' component={Student} />
+                                <Route path='/teachers' component={Teacher} />
+                                <Route path='/staffs' component={Staff} />
+                            </Switch>
+                        </Content>
 
+                    </Layout>
                 </Layout>
-            </Layout>
+            </Router>
         )
     }
 }

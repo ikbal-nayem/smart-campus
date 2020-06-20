@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, Layout } from 'antd';
 import {
     UserOutlined,
@@ -15,17 +16,23 @@ const HomeMenu = ({ collapsed }) =>{
             <div className="logo" />
             <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
                 <Menu.Item key="1" icon={<UserOutlined />}>
-                nav 1
+                <Link to="/dashboard">Dashboard</Link>
                 </Menu.Item>
                 <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-                nav 2
+                <Link to="/students">Students</Link>
                 </Menu.Item>
                 <Menu.Item key="3" icon={<UploadOutlined />}>
-                nav 3
+                <Link to="/teachers">Teachers</Link>
+                </Menu.Item>
+                <Menu.Item key="4" icon={<UploadOutlined />}>
+                <Link to="staffs">Staffs</Link>
+                </Menu.Item>
+                <Menu.Item key="5" icon={<UploadOutlined />}>
+                Exams
                 </Menu.Item>
             </Menu>
         </Sider>
     )
 }
 
-export default HomeMenu;
+export {HomeMenu};

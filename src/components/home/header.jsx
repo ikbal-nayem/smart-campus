@@ -1,5 +1,6 @@
 import React from 'react';
-import { Layout } from 'antd';
+import { Layout, Button } from 'antd';
+import { logout } from '../../_service'
 import {
     MenuUnfoldOutlined,
     MenuFoldOutlined
@@ -8,17 +9,17 @@ import './css/header.css'
 
 const { Header } = Layout;
 
-const MainHeader = ({ collapsed, toggle }) =>{
+const MainHeader = ({ collapsed, toggle, history }) =>{
     return(
         <Header className='header' style={{paddingLeft: collapsed?80:200, transition: '.2s'}}>
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
             className: 'trigger',
             onClick: toggle,
             })}
-            <p>Logout</p>
+            <Button type='link' onClick={()=>{logout(history)}}>Logout</Button>
         </Header>
     )
 }
 
 
-export default MainHeader;
+export {MainHeader};

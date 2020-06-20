@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import LoginForm from './contents/auth/login';
-import SignupForm from './contents/auth/register';
-import Home from './contents/home'
+import { LoginForm, SignupForm } from './contents/auth';
+import { Authenticate }  from './_service/authentication';
+import Home from './contents/home';
 
 function App() {
 	return (
@@ -12,7 +12,9 @@ function App() {
 				<Switch>
 					<Route path='/login' component={LoginForm} />
 					<Route path='/register' component={SignupForm} />
-					<Route path='/' exact component={Home} />
+					<Authenticate>
+						<Route path='/' component={Home} />
+					</Authenticate>
 				</Switch>
 			</Router>
 		</div>
