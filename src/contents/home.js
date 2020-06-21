@@ -9,39 +9,63 @@ import Teacher from './teachers'
 import Student from './students'
 import Staff from './staffs'
 
-const { Content } = Layout;
+const { Content, Sider } = Layout;
 
 class Home extends React.Component{
-    state = {
-        collapsed: true,
-    };
-    
-    toggle = () => {
-        this.setState({ collapsed: !this.state.collapsed, });
-    };
+	state = {
+		collapsed: true,
+		collapseWidth: 80
+	};
+	
+	toggle = () => {
+		this.setState({ collapsed: !this.state.collapsed, });
+	};
 
-    render(){
-        return(
-            <Router>
-                <Layout className='site-background'>
-                    <MainHeader collapsed={this.state.collapsed} toggle={this.toggle} history={this.props.history} />
-                    <HomeMenu collapsed={this.state.collapsed} />
-                    <Layout className='site-background' style={{marginLeft: this.state.collapsed?80:200, transition: '.2s'}}>
+	onBroken = (broken) => {
+    	broken ? 
+    		this.setState({collapsed: true, collapseWidth: 0})
+    		: 
+    		this.setState({collapseWidth: 80})
+	}
 
-                        <Content className='site-content'>
-                            <Switch>
-                                <Route path='/' exact component={Dashboard} />
-                                <Route path='/students' component={Student} />
-                                <Route path='/teachers' component={Teacher} />
-                                <Route path='/staffs' component={Staff} />
-                            </Switch>
-                        </Content>
+	render(){
+		return(
+			<Router>
+				<Layout className='site-background'>
+					<MainHeader
+						collapsed={this.state.collapsed}
+						collapseWidth={this.state.collapseWidth}
+						toggle={this.toggle}
+						history={this.props.history}
+					/>
+					<Sider trigger={null} collapsible
+						collapsed={this.state.collapsed}
+						className='sider'
+						collapsedWidth={this.state.collapseWidth}
+						breakpoint='md'
+						onBreakpoint={this.onBroken}
+					>
+						<HomeMenu/>
+					</Sider>
 
-                    </Layout>
-                </Layout>
-            </Router>
-        )
-    }
+					<Layout
+						className='site-background'
+						style={{marginLeft: this.state.collapsed?this.state.collapseWidth:this.state.collapseWidth===0?0:200, transition: '.2s'}}
+					>
+						<Content className='site-content'>
+							<Switch>
+								<Route path='/' exact component={Dashboard} />
+								<Route path='/students' component={Student} />
+								<Route path='/teachers' component={Teacher} />
+								<Route path='/staffs' component={Staff} />
+							</Switch>
+						</Content>
+
+					</Layout>
+				</Layout>
+			</Router>
+		)
+	}
 }
 
 export default Home;

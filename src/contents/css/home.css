@@ -2,6 +2,12 @@
     background: var(--bg-color);
     height: 100vh;
 }
+.sider {
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    
+}
 .site-content{
     margin: 70px 10px 15px;
     padding: 20px;

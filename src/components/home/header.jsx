@@ -9,9 +9,9 @@ import './css/header.css'
 
 const { Header } = Layout;
 
-const MainHeader = ({ collapsed, toggle, history }) =>{
+const MainHeader = ({ collapsed, collapseWidth, toggle, history }) =>{
     return(
-        <Header className='header' style={{paddingLeft: collapsed?80:200, transition: '.2s'}}>
+        <Header className='header' style={{paddingLeft: collapsed?collapseWidth:200, transition: '.2s'}}>
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
             className: 'trigger',
             onClick: toggle,
